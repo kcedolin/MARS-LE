@@ -1,7 +1,16 @@
-# MARS
-MARS (official) MIPS Assembler and Runtime Simulator
+# Custom Language
+Implemented instructions:
+Fate & Aura operations: bless, curse, tarot, foresee, fate, cast, yesno, choose, blessall, drain.
+Branching operations: ifgood, ifbad, beq, j
+I/O operations: whisper, syscall
+Bitmap operations: crystal, seerface, clearveil, glowrow, glowcol
+Utility operations: li
+Run instructions:
+Copy SeerLanguange.java and SeerLanguage.jar into the customlangs folder
+Rebuild MARS LE and switch to SeerLanguage
+Write assembly using SEER opcodes
+To use bitmap: enable bitmap display in MARS LE and map at  
+0x10008000, 512x512, row-major
 
- MARS is a lightweight interactive development environment (IDE) for programming in MIPS assembly language, intended for educational-level use with Patterson and Hennessy's Computer Organization and Design.
- MARS was developed by Pete Sanderson and Ken Vollmar and can be found at https://dpetersanderson.github.io/.
 
- This fork of MARS is a research project undertaken by John Edelman, Jun Law, and Dominic Dabish in summer 2025, aiming to modernize MARS and specifically to enable students to specify their own custom assembly languages for use with the MARS simulator.
+ 
