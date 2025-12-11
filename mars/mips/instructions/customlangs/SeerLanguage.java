@@ -344,24 +344,54 @@ public class SeerLanguage extends CustomAssembly {
             )
         );
 
+        // uplift: mystical LUI (3 operands: rd, rs, imm16; rs is ignored)
         instructionList.add(
                 new BasicInstruction(
-                        "li $t1, -100",
-                        "li like mips, load immediate (addi with $zero)",
+                        "uplift $t1, $t2, 100",                     // ✅ 3 operands: rd, rs, imm
+                        "Load upper 16 bits of an immediate into $t1 (like lui; $t2 is ignored)",
                         BasicInstructionFormat.I_FORMAT,
-
-                        "001000 00000 fffff ssssssssssssssss",
+                        // opcode=001111, rs=sssss, rt=fffff (dest), imm=tttt...
+                        "001111 sssss fffff tttttttttttttttt",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement)
                                     throws ProcessingException {
 
                                 int[] operands = statement.getOperands();
-                                int imm = operands[1];
-                                RegisterFile.updateRegister(operands[0], imm);
+                                int imm = operands[2] & 0xFFFF;     // third operand = imm16
+                                int value = imm << 16;              // move into upper half
+
+                                // first operand is dest register
+                                RegisterFile.updateRegister(operands[0], value);
                             }
                         }
                 )
         );
+
+
+        instructionList.add(
+                new BasicInstruction(
+                        "weave $t1, $t2, 100",
+                        "OR immediate: $t1 = $t2 | (imm & 0xFFFF) (like ori)",
+                        BasicInstructionFormat.I_FORMAT,
+                        // opcode = 001101 (ori), rs = sssss (source), rt = fffff (dest), imm = tttt...
+                        "001101 sssss fffff tttttttttttttttt",
+                        new SimulationCode() {
+                            public void simulate(ProgramStatement statement)
+                                    throws ProcessingException {
+
+                                int[] operands = statement.getOperands();
+
+                                int rsVal = RegisterFile.getValue(operands[1]);
+                                int imm   = operands[2] & 0xFFFF;   // 16-bit immediate, zero-extended
+
+                                int result = rsVal | imm;
+                                RegisterFile.updateRegister(operands[0], result);
+                            }
+                        }
+                )
+        );
+
+
 
         instructionList.add(
                 new BasicInstruction(

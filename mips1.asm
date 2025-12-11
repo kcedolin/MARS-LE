@@ -1,4 +1,4 @@
-      .text
+        .text
         .globl main
 
      # Fate registers (t-registers)
@@ -36,27 +36,39 @@
 
 main:
         # Set the crystal ball to dark blue-ish
-        li      $orb_col, 0x00002060    # ARGB-ish color
+        # color = 0x00002060 (fits in 16 bits)
+        weave    $orb_col, $zero, 0x2060     # ARGB-ish color
         clearveil $orb_col      
 
         # Draw the seer avatar a bit from the left
-        li      $stars, 100             
+        weave    $stars, $zero, 100          
         seerface $stars                 
 
         # Draw a glowing horizontal line across the ball
-        li      $orb_y, 120             # row
-        li      $orb_col, 0x00FF    # purple aura
-        glowrow $orb_y, $orb_col      
+        weave    $orb_y, $zero, 120          # row
+
+        # color = 0x00FF00FF (purple aura)
+        #uplift $orb_col, 0x0FF
+                
+        weave    $orb_col, $orb_col, 0x00FF  # lower 16 bits
+        # now $orb_col = 0x00FF00FF
+
+        glowrow  $orb_y, $orb_col      
 
         # Draw a glowing vertical line
-        li      $orb_x, 256             # middle column
-        glowcol $orb_x, $orb_col  
+        weave    $orb_x, $zero, 256          # middle column (0x0100)
+        glowcol  $orb_x, $orb_col  
 
         # Place a single bright pixel "star" above the seer
-        li      $orb_x, 108             # near seer face
-        li      $orb_y, 5
-        li      $orb_col, 0x00FF    # bright yellow
-        crystal $orb_x, $orb_y, $orb_col 
+        weave    $orb_x, $zero, 108          # near seer face
+        weave    $orb_y, $zero, 5
 
-        li      $v0, 10
+        # color = 0x00FFFF00 (bright yellow)
+     #   uplift   $orb_col, 0x00FF            # upper 16 bits
+        weave    $orb_col, $orb_col, 0xFF00  # lower 16 bits
+        # now $orb_col = 0x00FFFF00
+
+        crystal  $orb_x, $orb_y, $orb_col 
+
+        weave    $v0, $zero, 10
         syscall
